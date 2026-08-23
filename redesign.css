@@ -1,0 +1,1310 @@
+/* ============================================================
+   MARTIN FERREIRA — Rediseño visual premium
+   Solo capa visual. Todas las clases y enganches de JS se conservan.
+   ============================================================ */
+
+/* ---------- Fonts ---------- */
+@font-face {
+    font-family: 'Bodoni Moda';
+    src: url('assets/fonts/BodoniModa-VariableFont_opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Bodoni Moda';
+    src: url('assets/fonts/BodoniModa-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Montserrat';
+    src: url('assets/fonts/Montserrat-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ---------- Tokens ---------- */
+:root {
+    --ink: #1B1714;
+    --espresso: #271F1A;
+    --espresso-2: #322820;
+    --paper: #F3EEE5;
+    --surface: #FBF8F2;
+    --line: #E2D9CB;
+    --line-soft: #ECE4D7;
+    --brass: #A47C46;
+    --brass-deep: #8A6638;
+    --muted: #6E6358;
+    --muted-2: #978A7B;
+    --cream: #F6F1E9;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+    color: var(--ink);
+    background-color: var(--paper);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; }
+
+::selection { background: var(--brass); color: #fff; }
+
+/* shared helpers */
+.serif { font-family: 'Bodoni Moda', Georgia, serif; }
+
+/* ============================================================
+   HEADER / NAV
+   ============================================================ */
+header {
+    background: rgba(243, 238, 229, 0.82);
+    backdrop-filter: blur(16px) saturate(1.1);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    padding: 22px 48px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(226, 217, 203, 0.7);
+    transition: transform 0.5s var(--ease), background 0.5s var(--ease);
+}
+
+header.header-hidden { transform: translateY(-100%); }
+
+.header-content {
+    max-width: 1360px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.36em;
+    color: var(--ink);
+    text-decoration: none;
+    padding-left: 0.36em;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 38px;
+    align-items: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+    position: relative;
+    padding-bottom: 4px;
+    transition: color 0.4s var(--ease);
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 1px;
+    background: var(--brass-deep);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.45s var(--ease);
+}
+
+nav a:hover { color: var(--brass-deep); }
+nav a:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* Hamburger */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 6px;
+    padding: 8px;
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 1001;
+}
+.hamburger span {
+    display: block;
+    width: 26px;
+    height: 1.5px;
+    background: var(--ink);
+    transition: all 0.4s var(--ease);
+}
+.hamburger.active span { background: var(--cream); }
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+/* Mobile nav overlay */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    background: rgba(20, 16, 13, 0.97);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.mobile-nav.active { display: flex; }
+.mobile-nav ul { list-style: none; text-align: center; display: flex; flex-direction: column; gap: 30px; }
+.mobile-nav a {
+    color: var(--cream);
+    text-decoration: none;
+    font-family: 'Bodoni Moda', serif;
+    font-size: 30px;
+    letter-spacing: 0.02em;
+    transition: color 0.4s var(--ease);
+}
+.mobile-nav a:hover { color: var(--brass); font-style: italic; }
+
+/* ============================================================
+   PAGE WRAPPER — scroll natural + orden de secciones
+   ============================================================ */
+.page-wrapper {
+    height: auto;
+    overflow-y: visible;
+    scroll-snap-type: none;
+    display: flex;
+    flex-direction: column;
+}
+
+#hero         { order: 1; }
+#services     { order: 2; }
+#hours        { order: 3; }
+#clients      { order: 4; }
+#shop         { order: 5; }
+#masajes-info { order: 6; }
+#course       { order: 7; }
+#contact      { order: 8; }
+
+.hero, .hours, .shop, .masajes-info, .course, .clients, .services, footer {
+    position: relative;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    scroll-snap-align: none;
+    scroll-snap-stop: unset;
+}
+
+/* arrows hidden (scroll natural) */
+.scroll-btn { display: none !important; }
+
+/* ============================================================
+   BUTTONS (sistema global)
+   ============================================================ */
+.btn,
+.hours-cta-btn,
+.masajes-info-btn,
+.course-btn,
+.catalog-close,
+.product-modal-add-btn,
+.shop-product-add,
+.cart-checkout-btn,
+.catalog-product-add {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid transparent;
+    border-radius: 0;
+    transition: all 0.45s var(--ease);
+}
+
+/* Hero buttons — sobre oscuro */
+.btn {
+    padding: 16px 38px;
+    background: transparent;
+    color: var(--cream);
+    border-color: rgba(246, 241, 233, 0.5);
+}
+.btn:hover {
+    background: var(--cream);
+    color: var(--ink);
+    border-color: var(--cream);
+}
+.btn-primary {
+    background: var(--cream);
+    color: var(--ink);
+    border-color: var(--cream);
+}
+.btn-primary:hover {
+    background: var(--brass);
+    border-color: var(--brass);
+    color: #fff;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+    min-height: 100dvh;
+    background: #100D0B url('assets/images/gallery/fondo.png') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    color: var(--cream);
+    padding: 92px 24px 92px;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(15,12,10,0.55) 0%, rgba(15,12,10,0.12) 36%, rgba(15,12,10,0.30) 60%, rgba(15,12,10,0.90) 100%);
+    z-index: 1;
+}
+.hero-frame {
+    position: absolute;
+    top: 86px;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
+    border: 1px solid rgba(246, 241, 233, 0.26);
+    z-index: 2;
+    pointer-events: none;
+}
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 1360px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.hero-eyebrow {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: rgba(224, 196, 156, 0.95);
+    margin-bottom: 26px;
+}
+.hero h1 {
+    font-family: 'Bodoni Moda', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(44px, 6.4vw, 90px);
+    line-height: 0.99;
+    letter-spacing: 0.005em;
+    margin-bottom: 0;
+}
+.hero h1 em { font-style: italic; color: rgba(232, 208, 174, 0.96); }
+.hero-tagline {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(14px, 1.5vw, 16px);
+    font-weight: 300;
+    color: rgba(246, 241, 233, 0.84);
+    margin: 22px 0 0;
+    max-width: 460px;
+    line-height: 1.7;
+}
+.hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px 18px;
+    margin-top: 22px;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    color: rgba(246, 241, 233, 0.78);
+}
+.hero-meta a { color: inherit; text-decoration: none; transition: color 0.4s var(--ease); }
+.hero-meta a:hover { color: var(--brass); }
+.hero-meta .hero-dot { color: rgba(246, 241, 233, 0.4); }
+.hero-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+/* ============================================================
+   SERVICES
+   ============================================================ */
+.services {
+    background: var(--surface);
+    padding: clamp(90px, 11vh, 140px) 48px clamp(90px, 11vh, 140px);
+}
+.services-inner { max-width: 1240px; margin: 0 auto; width: 100%; }
+.services-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 40px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+}
+.services-top h2 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(34px, 4.4vw, 56px);
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1;
+}
+.services-currency {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    color: var(--muted-2);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+.services-top a {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 12px !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase;
+    color: var(--brass-deep) !important;
+    text-decoration: none;
+    font-weight: 600;
+}
+.services-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 48px;
+    border-bottom: none;
+    flex-wrap: wrap;
+}
+.services-tab {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 13px 30px;
+    cursor: pointer;
+    color: var(--muted-2);
+    position: relative;
+    transition: all 0.4s var(--ease);
+}
+.services-tab::after { display: none; }
+.services-tab:hover { color: var(--ink); border-color: var(--muted-2); }
+.services-tab.active {
+    color: var(--cream);
+    background: var(--ink);
+    border-color: var(--ink);
+}
+.services-panel { display: none; }
+.services-panel.active {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 44px 56px;
+}
+.services-subcategory { break-inside: avoid; }
+.services-subcategory h3 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink);
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+}
+.service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+}
+.service-item:last-child { border-bottom: none; }
+.service-item > span:first-child { position: relative; }
+.service-price {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--brass-deep);
+    white-space: nowrap;
+    margin-left: 12px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+.service-price.consultar {
+    font-size: 13px;
+    color: var(--muted-2);
+    font-weight: 400;
+    font-style: italic;
+    font-family: 'Bodoni Moda', serif;
+}
+
+/* ============================================================
+   HOURS — Nuestro Local
+   ============================================================ */
+.hours {
+    background: var(--paper);
+    padding: clamp(90px, 11vh, 140px) 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.hours-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 72px;
+    align-items: center;
+}
+.about-gallery { flex: none; width: auto; }
+.about-gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.about-gallery-item {
+    overflow: hidden;
+    aspect-ratio: 1;
+    background: #e7ddcd;
+}
+.about-gallery-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.9s var(--ease);
+}
+.about-gallery-item:hover img { transform: scale(1.06); }
+
+.hours-info { flex: none; text-align: left; padding: 0; }
+.hours h2 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(32px, 3.8vw, 46px);
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+}
+.hours-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--brass-deep);
+    margin-bottom: 26px;
+}
+.hours-description {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 32px;
+    max-width: 460px;
+}
+.about-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 20px;
+    margin-bottom: 36px;
+}
+.about-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13.5px;
+    color: var(--ink);
+}
+.about-feature-icon {
+    width: 22px; height: 22px;
+    background: transparent;
+    color: var(--brass-deep);
+    border: 1px solid var(--brass);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+.hours-schedule {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 34px;
+    max-width: 420px;
+}
+.hours-schedule-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+}
+.hours-schedule-row:last-child { border-bottom: none; }
+.hours-day { font-weight: 500; color: var(--ink); letter-spacing: 0.02em; }
+.hours-time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.hours-closed { color: var(--muted-2); font-style: italic; }
+.hours-cta-btn {
+    padding: 16px 38px;
+    background: var(--ink);
+    color: var(--cream);
+    border-color: var(--ink);
+}
+.hours-cta-btn:hover { background: var(--brass-deep); border-color: var(--brass-deep); color: #fff; }
+
+/* ============================================================
+   CLIENTS — Opción C: pestañas + carrusel sobre tinta
+   ============================================================ */
+.clients {
+    background: var(--ink);
+    padding: clamp(90px, 11vh, 140px) 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.clients-header { text-align: center; margin-bottom: 44px; }
+.clients-header h2 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(34px, 4.4vw, 54px);
+    font-weight: 400;
+    color: var(--cream);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+}
+.clients-header-subtitle {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 18px;
+    color: rgba(246,241,233,0.7);
+    font-style: italic;
+}
+
+/* Tabs */
+.clients-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 44px;
+    flex-wrap: wrap;
+}
+.clients-tab {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 13px 30px;
+    cursor: pointer;
+    border: 1px solid rgba(246,241,233,0.3);
+    background: transparent;
+    color: rgba(246,241,233,0.75);
+    border-radius: 0;
+    transition: all 0.4s var(--ease);
+}
+.clients-tab:hover { color: var(--cream); border-color: rgba(246,241,233,0.6); }
+.clients-tab.active {
+    background: var(--cream);
+    color: var(--ink);
+    border-color: var(--cream);
+}
+
+/* Carousel */
+.clients-carousel {
+    max-width: 1240px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.clients-nav {
+    width: 46px; height: 46px;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid rgba(246,241,233,0.4);
+    color: var(--cream);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s var(--ease);
+    border-radius: 0;
+}
+.clients-nav svg { width: 16px; height: 16px; }
+.clients-nav:hover { background: var(--cream); color: var(--ink); border-color: var(--cream); }
+.clients-viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+.clients-track {
+    display: none;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+}
+.clients-track::-webkit-scrollbar { height: 0; width: 0; display: none; }
+.clients-track.active { display: flex; }
+.clients-slide {
+    flex: 0 0 320px;
+    scroll-snap-align: start;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: #2a221c;
+}
+.clients-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.9s var(--ease);
+}
+.clients-slide video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.9s var(--ease);
+}
+.clients-slide:hover img,
+.clients-slide:hover video { transform: scale(1.05); }
+
+/* ============================================================
+   SHOP
+   ============================================================ */
+.shop {
+    background: var(--paper);
+    padding: clamp(90px, 11vh, 140px) 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.shop-inner { max-width: 1240px; margin: 0 auto; width: 100%; }
+.shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 26px;
+}
+.shop-header h2 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(34px, 4.4vw, 56px);
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1;
+}
+.shop-header a {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--brass-deep);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 3px;
+    white-space: nowrap;
+}
+.shop-header a::after {
+    content: '';
+    position: absolute; left: 0; bottom: 0;
+    width: 100%; height: 1px;
+    background: var(--brass-deep);
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 0.45s var(--ease);
+}
+.shop-header a:hover::after { transform: scaleX(1); transform-origin: left; }
+.shop-divider { border: none; border-top: 1px solid var(--line); margin-bottom: 40px; }
+.shop-description {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 40px;
+    max-width: 900px;
+}
+.shop-products-container { position: relative; display: flex; flex-direction: column; overflow: hidden; }
+.shop-row { margin-bottom: 30px; }
+.shop-row:last-child { margin-bottom: 0; }
+.shop-nav-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 16px; }
+.shop-nav-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    width: 42px; height: 42px;
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.4s var(--ease);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    align-self: auto;
+}
+.shop-nav-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.shop-nav-btn.prev { margin-right: 0; }
+.shop-nav-btn.next { margin-left: 0; }
+.shop-products-wrapper { flex: 1; overflow: hidden; }
+.shop-products-grid {
+    display: flex;
+    gap: 28px;
+    transition: transform 0.7s var(--ease);
+    align-items: stretch;
+}
+.shop-product-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    overflow: hidden;
+    flex: 0 0 calc((100% - 56px) / 3);
+    min-width: 0;
+    cursor: pointer;
+    background: var(--surface);
+    transition: border-color 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.shop-product-card:hover { box-shadow: none; border-color: var(--brass); transform: translateY(-4px); }
+.shop-product-image {
+    position: relative;
+    width: 100%;
+    padding-bottom: 78%;
+    background: #efe7d9;
+    overflow: hidden;
+}
+.shop-product-image img {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%; height: 100%;
+    max-width: 100%; max-height: 100%;
+    object-fit: cover;
+    transition: transform 0.9s var(--ease);
+}
+.shop-product-card:hover .shop-product-image img { transform: translate(-50%, -50%) scale(1.05); }
+.shop-product-badge {
+    position: absolute; bottom: 12px; right: 12px;
+    background: var(--ink); color: var(--cream);
+    padding: 6px 12px; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+}
+.shop-product-info { padding: 26px 26px 28px; display: flex; flex-direction: column; flex: 1; }
+.shop-product-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; font-size: 10.5px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--brass-deep); margin-bottom: 10px;
+}
+.shop-product-name {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 19px; color: var(--ink);
+    margin-bottom: 12px; line-height: 1.25; font-weight: 500;
+}
+.shop-product-price {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 21px; color: var(--ink);
+    margin-bottom: 0; font-weight: 500; order: 5;
+}
+.shop-product-description {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin-bottom: 20px; flex: 1;
+}
+.shop-product-foot,
+.shop-product-info { gap: 0; }
+.shop-product-add {
+    padding: 0 0 3px 0;
+    background: transparent;
+    color: var(--ink);
+    border: none;
+    border-bottom: 1px solid var(--ink);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    align-self: flex-start;
+    margin-top: 18px;
+    order: 6;
+    border-radius: 0;
+}
+.shop-product-add:hover { background: transparent; color: var(--brass-deep); border-color: var(--brass-deep); }
+
+/* ============================================================
+   PRODUCT MODAL
+   ============================================================ */
+.product-modal { display: none; position: fixed; inset: 0; width: 100%; height: 100%; z-index: 2000; }
+.product-modal.active { display: block; }
+.product-modal-overlay { position: absolute; inset: 0; background: rgba(20,16,13,0.6); backdrop-filter: blur(6px); }
+.product-modal-content {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--surface);
+    max-width: 920px; width: 90%;
+    max-height: 90vh;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(20,16,13,0.35);
+    border: 1px solid var(--line);
+}
+.product-modal-close {
+    position: absolute; top: 22px; right: 22px;
+    background: transparent; border: none;
+    font-size: 22px; color: var(--ink); cursor: pointer;
+    z-index: 10; transition: color 0.3s; line-height: 1;
+}
+.product-modal-close:hover { color: var(--brass-deep); }
+.product-modal-body { display: flex; gap: 48px; padding: 48px; max-height: 90vh; overflow-y: auto; }
+.product-modal-image {
+    flex: 1; background: #efe7d9; border-radius: 0;
+    display: flex; align-items: center; justify-content: center; min-height: 320px;
+}
+.product-modal-image img { max-width: 100%; max-height: 420px; object-fit: contain; }
+.product-modal-info { flex: 1; display: flex; flex-direction: column; }
+.product-modal-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; font-weight: 600;
+    color: var(--brass-deep); margin-bottom: 14px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+}
+.product-modal-name {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 30px; font-weight: 500; color: var(--ink);
+    margin-bottom: 16px; line-height: 1.2;
+}
+.product-modal-price {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 26px; font-weight: 500; color: var(--brass-deep);
+    margin-bottom: 24px;
+}
+.product-modal-description { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 34px; flex: 1; }
+.product-modal-add-btn {
+    padding: 16px 40px; background: var(--ink); color: var(--cream);
+    border-color: var(--ink); align-self: flex-start;
+}
+.product-modal-add-btn:hover { background: var(--brass-deep); border-color: var(--brass-deep); color: #fff; }
+
+/* ============================================================
+   PRODUCT CATALOG
+   ============================================================ */
+.product-catalog { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: var(--paper); z-index: 3000; overflow-y: auto; }
+.product-catalog.active { display: block; }
+.catalog-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 40px 48px; max-width: 1280px; margin: 0 auto;
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0;
+    background: rgba(243,238,229,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 5;
+}
+.catalog-header h2 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(28px, 3.4vw, 42px); font-weight: 400; color: var(--ink);
+}
+.catalog-close { padding: 14px 32px; background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.catalog-close:hover { background: var(--brass-deep); border-color: var(--brass-deep); color: #fff; }
+.catalog-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px;
+    padding: 48px; max-width: 1280px; margin: 0 auto;
+}
+.catalog-product-card {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--line); border-radius: 0; overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.catalog-product-card:hover { box-shadow: none; border-color: var(--brass); transform: translateY(-4px); }
+.catalog-product-image { width: 100%; padding-bottom: 86%; background: #efe7d9; position: relative; overflow: hidden; }
+.catalog-product-image img {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.9s var(--ease);
+}
+.catalog-product-card:hover .catalog-product-image img { transform: translate(-50%, -50%) scale(1.05); }
+.catalog-product-info { padding: 24px 26px 26px; display: flex; flex-direction: column; flex: 1; }
+.catalog-product-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--brass-deep); margin-bottom: 10px;
+}
+.catalog-product-name {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 18px; color: var(--ink); margin-bottom: 12px; line-height: 1.25; font-weight: 500;
+}
+.catalog-product-description { font-family: 'Montserrat', sans-serif; font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; flex: 1; }
+.catalog-product-price {
+    font-family: 'Bodoni Moda', serif; font-size: 20px; font-weight: 500; color: var(--ink); margin-bottom: 14px;
+}
+.catalog-product-add {
+    padding: 0 0 3px 0; background: transparent; color: var(--ink);
+    border: none; border-bottom: 1px solid var(--ink);
+    font-size: 11px; letter-spacing: 0.14em; align-self: flex-start; border-radius: 0;
+}
+.catalog-product-add:hover { background: transparent; color: var(--brass-deep); border-color: var(--brass-deep); }
+
+/* ============================================================
+   CART
+   ============================================================ */
+.cart-icon {
+    position: fixed; bottom: 30px; right: 30px;
+    width: 60px; height: 60px;
+    background: var(--ink); border-radius: 50%;
+    display: none; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 3500;
+    box-shadow: 0 10px 30px rgba(20,16,13,0.35);
+    transition: all 0.4s var(--ease);
+}
+.cart-icon:hover { background: var(--brass-deep); transform: scale(1.08); }
+.cart-icon svg { width: 26px; height: 26px; fill: var(--cream); }
+.cart-count {
+    position: absolute; top: -5px; right: -5px;
+    background: var(--brass); color: #fff;
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; font-family: 'Montserrat', sans-serif;
+}
+.cart-modal { display: none; position: fixed; inset: 0; width: 100%; height: 100%; z-index: 3600; }
+.cart-modal.active { display: block; }
+.cart-modal-overlay { position: absolute; inset: 0; background: rgba(20,16,13,0.6); backdrop-filter: blur(6px); }
+.cart-modal-content {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: var(--surface); max-width: 600px; width: 90%; max-height: 90vh;
+    border-radius: 0; overflow: hidden; box-shadow: 0 30px 80px rgba(20,16,13,0.35);
+    border: 1px solid var(--line);
+}
+.cart-header { display: flex; justify-content: space-between; align-items: center; padding: 26px 32px; border-bottom: 1px solid var(--line); }
+.cart-header h2 { font-family: 'Bodoni Moda', serif; font-size: 26px; font-weight: 500; color: var(--ink); margin: 0; }
+.cart-close { background: none; border: none; font-size: 22px; color: var(--ink); cursor: pointer; transition: color 0.3s; line-height: 1; }
+.cart-close:hover { color: var(--brass-deep); }
+.cart-body { padding: 8px 32px; max-height: 50vh; overflow-y: auto; }
+.cart-empty { text-align: center; padding: 48px 20px; color: var(--muted-2); font-family: 'Montserrat', sans-serif; }
+.cart-empty svg { width: 56px; height: 56px; margin-bottom: 20px; fill: var(--line); }
+.cart-item { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line-soft); }
+.cart-item-image { width: 76px; height: 76px; background: #efe7d9; border-radius: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+.cart-item-image img { width: 100%; height: 100%; object-fit: cover; }
+.cart-item-info { flex: 1; }
+.cart-item-brand { font-family: 'Montserrat', sans-serif; font-size: 10.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brass-deep); margin-bottom: 5px; }
+.cart-item-name { font-family: 'Bodoni Moda', serif; font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 12px; line-height: 1.3; }
+.cart-item-controls { display: flex; justify-content: space-between; align-items: center; }
+.cart-item-quantity { display: flex; align-items: center; gap: 10px; }
+.cart-quantity-btn { width: 30px; height: 30px; background: transparent; border: 1px solid var(--line); border-radius: 0; font-size: 15px; cursor: pointer; transition: all 0.3s; color: var(--ink); }
+.cart-quantity-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.cart-quantity-value { font-size: 14px; font-weight: 600; min-width: 28px; text-align: center; font-family: 'Montserrat', sans-serif; }
+.cart-item-price { font-family: 'Bodoni Moda', serif; font-size: 17px; font-weight: 500; color: var(--ink); }
+.cart-item-remove { background: none; border: none; color: var(--muted-2); cursor: pointer; font-size: 16px; transition: color 0.3s; }
+.cart-item-remove:hover { color: #b3492f; }
+.cart-footer { padding: 24px 32px; border-top: 1px solid var(--line); }
+.cart-total { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 22px; }
+.cart-total-label { font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.cart-total-value { font-family: 'Bodoni Moda', serif; font-size: 22px; color: var(--ink); font-weight: 500; }
+.cart-checkout-form { display: flex; flex-direction: column; gap: 16px; }
+.cart-form-group { display: flex; flex-direction: column; gap: 6px; }
+.cart-form-group label { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink); }
+.cart-form-group input {
+    padding: 13px 15px; border: 1px solid var(--line); border-radius: 0;
+    font-size: 14px; font-family: 'Montserrat', sans-serif; background: #fff;
+    transition: border-color 0.3s; color: var(--ink);
+}
+.cart-form-group input:focus { outline: none; border-color: var(--brass); }
+.cart-form-group input.error { border-color: #b3492f; }
+.cart-form-error { font-size: 12px; color: #b3492f; margin-top: 4px; }
+.cart-checkout-btn { padding: 16px 30px; background: var(--ink); color: var(--cream); border-color: var(--ink); width: 100%; }
+.cart-checkout-btn:hover { background: var(--brass-deep); border-color: var(--brass-deep); color: #fff; }
+.cart-checkout-btn:disabled { background: var(--muted-2); border-color: var(--muted-2); cursor: not-allowed; }
+.cart-dlocal-btn {
+    padding: 16px 30px; background: transparent; color: var(--ink);
+    border: 1px solid var(--ink); border-radius: 0; width: 100%;
+    font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+    transition: all 0.45s var(--ease); margin-top: 2px;
+}
+.cart-dlocal-btn:hover { background: var(--ink); color: var(--cream); }
+.cart-dlocal-btn:disabled { background: var(--muted-2); border-color: var(--muted-2); color: #fff; cursor: not-allowed; }
+.cart-payment-divider {
+    display: flex; align-items: center; gap: 14px; margin: 8px 0;
+    color: var(--muted-2); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.18em;
+    font-family: 'Montserrat', sans-serif;
+}
+.cart-payment-divider::before, .cart-payment-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.cart-success-message { text-align: center; padding: 48px 20px; }
+.cart-success-message svg { width: 56px; height: 56px; margin-bottom: 20px; fill: #4f7a52; }
+.cart-success-message h3 { font-family: 'Bodoni Moda', serif; font-size: 26px; color: var(--ink); margin-bottom: 12px; font-weight: 500; }
+.cart-success-message p { color: var(--muted); margin-bottom: 24px; font-family: 'Montserrat', sans-serif; }
+.cart-success-message button { padding: 14px 32px; background: var(--ink); color: var(--cream); border: 1px solid var(--ink); border-radius: 0; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: all 0.4s var(--ease); }
+.cart-success-message button:hover { background: var(--brass-deep); border-color: var(--brass-deep); color: #fff; }
+
+/* ============================================================
+   MASAJES INFO
+   ============================================================ */
+.masajes-info {
+    padding: clamp(90px, 11vh, 140px) 48px;
+    background: var(--espresso);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.masajes-info::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 22px, rgba(255,255,255,0.014) 22px, rgba(255,255,255,0.014) 23px);
+    pointer-events: none;
+}
+.masajes-info::after {
+    content: '';
+    position: absolute; width: 520px; height: 520px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(164,124,70,0.10) 0%, transparent 70%);
+    top: -160px; right: -120px; pointer-events: none;
+}
+.masajes-info .circle-decor {
+    position: absolute; width: 360px; height: 360px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(246,241,233,0.04) 0%, transparent 70%);
+    bottom: -90px; left: -90px; pointer-events: none;
+}
+.masajes-info-content { max-width: 1240px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 0; position: relative; z-index: 2; }
+.masajes-info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.masajes-texto-col { display: flex; flex-direction: column; }
+.masajes-info h2 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(36px, 4.6vw, 58px);
+    font-weight: 400; color: var(--cream);
+    letter-spacing: -0.01em; line-height: 1.02;
+    margin-bottom: 0;
+}
+.masajes-info-subtitle {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(19px, 2vw, 24px); font-style: italic; font-weight: 400;
+    color: rgba(232, 208, 174, 0.96); margin: 20px 0 22px; line-height: 1.35; max-width: 440px;
+}
+.masajes-info-description {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px; line-height: 1.8; color: rgba(246,241,233,0.78);
+    margin-bottom: 32px; max-width: 460px;
+}
+.masajes-info-features { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; margin-bottom: 38px; }
+.masajes-feature {
+    font-family: 'Montserrat', sans-serif;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13.5px; color: var(--cream);
+}
+.masajes-feature-icon {
+    width: 22px; height: 22px;
+    background: transparent; color: var(--brass);
+    border: 1px solid rgba(164,124,70,0.7); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0;
+}
+.masajes-info-btn { padding: 16px 40px; background: var(--cream); color: var(--ink); border-color: var(--cream); align-self: flex-start; }
+.masajes-info-btn:hover { background: var(--brass); border-color: var(--brass); color: #fff; transform: translateY(-2px); box-shadow: none; }
+.masajes-info-video { position: relative; border-radius: 0; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.4); background: #1a1410 center/cover no-repeat; }
+.masajes-video { width: 100%; height: clamp(320px, 46vh, 520px); object-fit: cover; display: block; }
+
+/* ============================================================
+   COURSE
+   ============================================================ */
+.course {
+    min-height: 78vh;
+    background-color: var(--ink);
+    background-size: cover;
+    background-position: center;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; color: var(--cream);
+    padding: clamp(90px, 12vh, 150px) 32px;
+    position: relative;
+    transition: background-image 1s ease-in-out;
+}
+.course::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(20,16,13,0.62) 0%, rgba(39,31,26,0.78) 100%);
+    z-index: 1;
+}
+.course-content { position: relative; z-index: 2; max-width: 760px; }
+.course h2 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(34px, 4.6vw, 60px); font-weight: 400; color: var(--cream);
+    margin-bottom: 20px; letter-spacing: -0.01em; line-height: 1.05;
+}
+.course-subtitle {
+    font-family: 'Bodoni Moda', serif;
+    font-size: clamp(17px, 2.2vw, 24px); font-weight: 400; font-style: italic;
+    margin-bottom: 16px; line-height: 1.4; color: rgba(246,241,233,0.9);
+}
+.course-duration {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; font-weight: 600;
+    margin-bottom: 36px; color: rgba(224, 196, 156, 0.95);
+}
+.course-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.course-btn { padding: 16px 40px; }
+.course-btn.primary { background: var(--cream); color: var(--ink); border-color: var(--cream); }
+.course-btn.primary:hover { background: var(--brass); color: #fff; border-color: var(--brass); }
+.course-btn.secondary { background: transparent; color: var(--cream); border: 1px solid rgba(246,241,233,0.5); }
+.course-btn.secondary:hover { background: var(--cream); color: var(--ink); border-color: var(--cream); }
+
+/* ============================================================
+   FOOTER — Contacto
+   ============================================================ */
+footer {
+    background: var(--ink); color: var(--cream);
+    padding: clamp(80px, 10vh, 120px) 48px clamp(32px, 4vh, 48px);
+    display: flex; flex-direction: column; justify-content: center;
+}
+.footer-content { max-width: 1240px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 48px; }
+.footer-section h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; font-weight: 600; margin-bottom: 22px;
+    letter-spacing: 0.22em; text-transform: uppercase; color: rgba(224, 196, 156, 0.95);
+}
+.footer-section ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-section li { margin-bottom: 0; }
+.footer-section a { color: rgba(246,241,233,0.72); text-decoration: none; font-size: 14px; font-family: 'Montserrat', sans-serif; transition: color 0.4s var(--ease); }
+.footer-section a:hover { color: var(--cream); }
+.footer-contact { font-size: 14px; line-height: 1.8; color: rgba(246,241,233,0.72); font-family: 'Montserrat', sans-serif; }
+.footer-contact p { margin: 0 0 6px; }
+.footer-contact .hours-grid { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin-top: 10px; }
+.footer-contact .hours-grid p { margin: 0; }
+.footer-contact .hours-grid .day { font-weight: 500; color: var(--cream); }
+.footer-map { margin-top: 14px; }
+.footer-map iframe { width: 100%; height: 150px; border-radius: 0; filter: grayscale(0.25) contrast(1.05); border: 1px solid rgba(246,241,233,0.16); }
+.footer-bottom {
+    max-width: 1240px; margin: 56px auto 0; width: 100%;
+    padding-top: 26px; border-top: 1px solid rgba(246,241,233,0.14);
+    display: flex; justify-content: space-between; align-items: center;
+}
+.footer-bottom p { font-size: 12px; color: rgba(246,241,233,0.5); font-family: 'Montserrat', sans-serif; }
+.payment-methods { display: flex; gap: 16px; font-size: 11px; color: rgba(246,241,233,0.5); letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Montserrat', sans-serif; }
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.js-reveal [data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+.js-reveal [data-reveal].reveal-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+    .js-reveal [data-reveal] { opacity: 1 !important; transform: none !important; transition: none; }
+    html { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .services-panel.active { grid-template-columns: repeat(2, 1fr); }
+    .catalog-grid { grid-template-columns: repeat(2, 1fr); }
+    .shop-product-card { flex: 0 0 calc((100% - 28px) / 2); }
+    .hours-container { gap: 48px; }
+    .masajes-info-row { gap: 44px; }
+}
+
+@media (max-width: 768px) {
+    header { padding: 16px 20px; }
+    nav { display: none; }
+    .hamburger { display: flex; }
+
+    .hero { padding: 80px 20px; }
+    .hero-content { padding: 0 14px; }
+    .hero-frame { top: 66px; left: 14px; right: 14px; bottom: 20px; }
+    .hero-buttons { flex-direction: column; align-items: stretch; width: 100%; }
+    .hero .btn { width: 100%; }
+
+    .services { padding: 72px 20px; }
+    .services-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .services-tabs { gap: 6px; }
+    .services-tab { padding: 11px 20px; font-size: 11px; letter-spacing: 0.12em; }
+    .services-panel.active { grid-template-columns: 1fr; gap: 32px; }
+    .services-currency { display: none; }
+
+    .hours { padding: 72px 20px; }
+    .hours-container { grid-template-columns: 1fr; gap: 40px; }
+    .hours-info { text-align: left; }
+    .about-features { grid-template-columns: 1fr 1fr; }
+
+    .clients { padding: 72px 20px; }
+    .clients-header { margin-bottom: 36px; }
+    .clients-tabs { margin-bottom: 32px; gap: 6px; }
+    .clients-tab { padding: 11px 18px; font-size: 11px; letter-spacing: 0.12em; }
+    .clients-carousel { gap: 8px; }
+    .clients-nav { width: 40px; height: 40px; }
+    .clients-slide { flex: 0 0 76vw; max-width: 300px; }
+
+    .shop { padding: 72px 20px; }
+    .shop-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
+    .shop-divider { margin-bottom: 22px; }
+    .shop-products-grid { gap: 14px; }
+    .shop-product-card { flex: 0 0 calc((100% - 14px) / 2); }
+    .shop-product-info { padding: 16px; }
+    .shop-product-name { font-size: 15px; }
+    .shop-product-price { font-size: 17px; }
+    .shop-product-description { display: none; }
+    .shop-nav-btn { width: 38px; height: 38px; }
+
+    .masajes-info { padding: 72px 20px; }
+    .masajes-info-row { grid-template-columns: 1fr; gap: 32px; }
+    .masajes-info-features { grid-template-columns: 1fr 1fr; }
+    .masajes-video { height: 260px; }
+
+    .course { padding: 80px 24px; min-height: 60vh; }
+    .course-buttons { flex-direction: column; align-items: stretch; }
+
+    footer { padding: 64px 20px 32px; }
+    .footer-content { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .footer-bottom { flex-direction: column; gap: 14px; text-align: center; margin-top: 40px; }
+
+    .product-modal-body { flex-direction: column; gap: 24px; padding: 30px; }
+    .product-modal-image { min-height: 220px; }
+    .product-modal-name { font-size: 24px; }
+    .product-modal-add-btn { width: 100%; }
+    .catalog-header { padding: 22px 20px; }
+    .catalog-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 24px 20px; }
+    .catalog-product-info { padding: 16px; }
+    .catalog-product-name { font-size: 15px; }
+}
+
+@media (max-width: 460px) {
+    .hero h1 { font-size: 44px; }
+    .about-features { grid-template-columns: 1fr; }
+    .masajes-info-features { grid-template-columns: 1fr; }
+    .footer-content { grid-template-columns: 1fr; }
+}

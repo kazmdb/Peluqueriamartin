@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Exitoso - Martin Ferreira</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #faf9f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .success-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            background: #27ae60;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+        .checkmark svg {
+            width: 40px;
+            height: 40px;
+            fill: #fff;
+        }
+        h1 {
+            font-size: 28px;
+            color: #2c2c2c;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .order-info {
+            background: #f5f3f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: left;
+            font-size: 14px;
+            color: #2c2c2c;
+            line-height: 1.8;
+        }
+        .order-info strong {
+            display: inline-block;
+            min-width: 100px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #2c2c2c;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 16px;
+        }
+        .btn:hover { background: #8b7355; }
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #2c2c2c;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="success-card">
+        <div id="loadingView">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <div class="loading-text">Verificando tu pago...</div>
+            </div>
+        </div>
+        <div id="successView" style="display: none;">
+            <div class="checkmark">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+            <h1>¡Pago Exitoso!</h1>
+            <p>Gracias por tu compra. Hemos recibido tu pago correctamente.</p>
+            <div class="order-info">
+                <p><strong>Orden:</strong> <span id="orderId">-</span></p>
+                <p><strong>Estado:</strong> Pagado</p>
+            </div>
+            <p style="font-size: 14px; color: #999;">Te enviaremos un WhatsApp con los detalles de tu pedido.</p>
+            <a href="index.html" class="btn">Volver a la tienda</a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('order_id') || urlParams.get('id') || '-';
+            document.getElementById('orderId').textContent = orderId;
+
+            setTimeout(function() {
+                document.getElementById('loadingView').style.display = 'none';
+                document.getElementById('successView').style.display = 'block';
+            }, 1500);
+        })();
+    </script>
+</body>
+</html>

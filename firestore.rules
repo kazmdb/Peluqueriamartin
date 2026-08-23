@@ -1,0 +1,68 @@
+rules_version = '2';
+
+// ============================================================
+// REGLAS DE SEGURIDAD DE FIRESTORE — Peluquería Martin Ferreira
+// ============================================================
+// Lógica:
+//   - /reservas   → cualquier usuario puede CREAR (para reservar turno).
+//                   Solo admins autenticados pueden leer, editar y borrar.
+//   - /config     → solo admins pueden leer y escribir.
+//   - /ingresos   → solo admins pueden leer y escribir.
+//   - /payments   → solo admins pueden leer. Las Cloud Functions escriben
+//                   con el SDK de Admin (que ignora estas reglas).
+//   - /orders     → solo admins pueden leer.
+//   - Todo lo demás → denegado por defecto.
+// ============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: el usuario está autenticado
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ── RESERVAS ─────────────────────────────────────────────
+    match /reservas/{reservaId} {
+      // Cualquier visitante puede crear una reserva (para el formulario público)
+      allow create: if
+        request.resource.data.keys().hasAll(['date', 'nombre', 'telefono']) &&
+        request.resource.data.nombre is string &&
+        request.resource.data.nombre.size() > 0 &&
+        request.resource.data.nombre.size() <= 100 &&
+        request.resource.data.telefono is string &&
+        request.resource.data.telefono.size() > 0 &&
+        request.resource.data.telefono.size() <= 20;
+
+      // Solo admins autenticados pueden leer, actualizar y borrar
+      allow read, update, delete: if isSignedIn();
+    }
+
+    // ── CONFIGURACIÓN ─────────────────────────────────────────
+    match /config/{docId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // ── INGRESOS ──────────────────────────────────────────────
+    match /ingresos/{ingresoId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // ── PAGOS (escritura solo desde Cloud Functions vía Admin SDK) ──
+    match /payments/{paymentId} {
+      allow read: if isSignedIn();
+      allow write: if false; // Solo Cloud Functions con Admin SDK
+    }
+
+    // ── ÓRDENES (escritura solo desde Cloud Functions vía Admin SDK) ──
+    match /orders/{orderId} {
+      allow read: if isSignedIn();
+      allow write: if false; // Solo Cloud Functions con Admin SDK
+    }
+
+    // ── CUALQUIER OTRO DOCUMENTO → DENEGADO ──────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
